@@ -133,21 +133,4 @@ All endpoints use JSON unless they serve the frontend. Sign in first; the browse
 
 For route payload details, see the corresponding handlers in `server.js` and the API calls in `public/app.js`.
 
-## Screenshots
 
-To prepare submission screenshots, run the app with sample data, capture the signed-in Admin dashboard at desktop width, and capture at least one catalog/subscription/invoice workflow. Also capture the customer portal and a narrow mobile viewport. Do not include real customer information, passwords, reset tokens, or SMTP credentials in screenshots.
-
-## GitHub submission
-
-From the project directory, create a repository on GitHub (without pre-populating it with a README), then replace `YOUR_GITHUB_USERNAME` with your GitHub username and run:
-
-```powershell
-git init
-git add .
-git commit -m "Complete Brightloop subscription management system"
-git branch -M main
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/brightloop.git
-git push -u origin main
-```
-
-The `.gitignore` excludes `node_modules`, local SQLite databases, environment files, and logs. Review `git status` before pushing and never commit real credentials or customer data.
