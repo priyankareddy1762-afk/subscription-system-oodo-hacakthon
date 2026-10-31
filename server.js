@@ -293,6 +293,28 @@ async function seedData() {
     db.prepare(`INSERT OR IGNORE INTO users (email, password_hash, role, customer_id) VALUES (?, ?, 'customer', ?)`)
       .run(customerEmail, await bcrypt.hash(validPassword(process.env.CUSTOMER_PASSWORD || 'Customer123!'), 10), customer.id);
   }
+
+  const demoCustomer = db.prepare('SELECT id FROM customers WHERE email = ? COLLATE NOCASE').get('jordan@example.com');
+  const demoPlan = db.prepare(`SELECT p.*, v.brand FROM plans p
+    JOIN variants v ON v.id = p.variant_id WHERE p.name = ? ORDER BY p.id LIMIT 1`).get('Starter monthly');
+  if (demoCustomer && demoPlan &&
+      !db.prepare('SELECT id FROM subscriptions WHERE customer_id = ? AND plan_id = ? LIMIT 1').get(demoCustomer.id, demoPlan.id)) {
+    const start = new Date();
+    const nextBilling = addInterval(start, demoPlan.billing_interval || demoPlan.interval);
+    const result = db.prepare(`INSERT INTO subscriptions
+      (customer_id, plan_id, status, workflow_status, started_at, next_billing_at, subscription_number, payment_terms_days)
+      VALUES (?, ?, 'active', 'active', ?, ?, NULL, 7)`)
+      .run(demoCustomer.id, demoPlan.id, start.toISOString(), nextBilling.toISOString());
+    const subscriptionId = Number(result.lastInsertRowid);
+    db.prepare('UPDATE subscriptions SET subscription_number = ? WHERE id = ?')
+      .run(`SUB-DEMO-${String(subscriptionId).padStart(6, '0')}`, subscriptionId);
+    const unitPrice = demoPlan.price_cents + (demoPlan.brand ? 56000 : 0);
+    db.prepare(`INSERT INTO subscription_lines
+      (subscription_id, product_id, description, quantity, unit_price_cents, tax_percent)
+      SELECT ?, v.product_id, ?, 1, ?, ? FROM variants v WHERE v.id = ?`)
+      .run(subscriptionId, demoPlan.name, unitPrice, demoPlan.tax_percent, demoPlan.variant_id);
+    createInvoice(subscriptionId, start.toISOString(), nextBilling.toISOString());
+  }
 }
 
 app.use(express.json({ limit: '100kb' }));

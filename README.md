@@ -44,7 +44,7 @@ brightloop/
 └── README.md
 ```
 
-The local database is created and migrated automatically at startup. By default it is `brightloop.sqlite` in the project directory. SQLite files and environment secrets are excluded from Git.
+The local database is created and migrated automatically at startup. By default it is `brightloop.sqlite` in the project directory. On first startup, Brightloop seeds sample products, plans, customers, and an active sample subscription with its invoice for Jordan Lee. This seed is idempotent and won't create duplicate demo subscriptions on later restarts. SQLite files and environment secrets are excluded from Git.
 
 ## Install and run
 
@@ -71,7 +71,7 @@ The tests start an isolated server and temporary SQLite database; they do not us
 
 ## Demo accounts
 
-On a fresh database, the app seeds these accounts and sample catalog/customer records:
+On a fresh database, the app seeds these accounts and sample records:
 
 | Role | Email | Password |
 |---|---|---|

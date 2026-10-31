@@ -24,6 +24,8 @@ test('admin can create a subscription, invoice it and record a payment', async (
     DB_PATH: path.join(directory, 'test.sqlite'),
     ADMIN_EMAIL: 'admin@test.local',
     ADMIN_PASSWORD: 'WorkflowTest123!',
+    CUSTOMER_EMAIL: 'jordan@example.com',
+    CUSTOMER_PASSWORD: 'Customer123!',
     SESSION_SECRET: 'workflow-test-session-secret'
   };
   function startServer() {
@@ -87,6 +89,16 @@ test('admin can create a subscription, invoice it and record a payment', async (
     return { response, payload, cookie: response.headers.get('set-cookie')?.split(';')[0] };
   }
 
+  const demoCustomerLogin = await signIn('jordan@example.com', 'Customer123!');
+  assert.equal(demoCustomerLogin.response.status, 200);
+  assert.equal(demoCustomerLogin.payload.role, 'customer');
+  const demoSubscriptions = await request('/api/portal/subscriptions', {}, demoCustomerLogin.cookie);
+  assert.equal(demoSubscriptions.payload.length, 1);
+  assert.equal(demoSubscriptions.payload[0].subscription_number, 'SUB-DEMO-000001');
+  const demoInvoices = await request('/api/portal/invoices', {}, demoCustomerLogin.cookie);
+  assert.equal(demoInvoices.payload.length, 1);
+  const demoInvoiceId = demoInvoices.payload[0].id;
+
   const weakRegistration = await request('/api/auth/register', {
     method: 'POST',
     body: JSON.stringify({ name: 'Weak Password', email: 'weak@example.com', password: 'lowercaseonly' })
@@ -131,6 +143,7 @@ test('admin can create a subscription, invoice it and record a payment', async (
   const blockedCustomerList = await request('/api/customers', {}, customerCookie);
   assert.equal(blockedCustomerList.response.status, 403);
   assert.equal((await request('/api/portal/profile', {}, customerCookie)).payload.email, 'workflow@example.com');
+  assert.equal((await request(`/api/portal/invoices/${demoInvoiceId}`, {}, customerCookie)).response.status, 404);
   const duplicateRegistration = await request('/api/auth/register', {
     method: 'POST',
     body: JSON.stringify({ name: 'Duplicate', email: 'workflow@example.com', password: 'CustomerWorkflow123!' })
@@ -296,7 +309,7 @@ test('admin can create a subscription, invoice it and record a payment', async (
 
   const dashboard = await request('/api/dashboard');
   assert.equal(dashboard.payload.revenue_cents, invoice.total_cents);
-  assert.equal(dashboard.payload.active_subscriptions, 4);
+  assert.equal(dashboard.payload.active_subscriptions, 5);
   const mrrBeforeYearly = dashboard.payload.mrr_cents;
   const yearlySubscription = await request('/api/subscriptions', {
     method: 'POST',
@@ -305,7 +318,7 @@ test('admin can create a subscription, invoice it and record a payment', async (
   assert.equal(yearlySubscription.response.status, 201);
   const dashboardWithYearly = await request('/api/dashboard');
   assert.equal(dashboardWithYearly.payload.mrr_cents - mrrBeforeYearly, 1250);
-  assert.equal(dashboardWithYearly.payload.active_subscriptions, 5);
+  assert.equal(dashboardWithYearly.payload.active_subscriptions, 6);
 
   const paused = await request(`/api/subscriptions/${created.payload.subscription.id}/status`, {
     method: 'PATCH',
