@@ -25,9 +25,10 @@
           <div id="loginError" class="form-error" role="alert"></div>
           <button class="button button-primary button-wide" type="submit">Sign in <span aria-hidden="true">→</span></button>
         </form>
-        <p class="login-hint">Demo access: <strong>admin@brightloop.com</strong> · <strong>Brightloop123!</strong></p>
+        <div class="auth-links"><button type="button" class="plain-link" data-auth-action="reset">Forgot password?</button><button type="button" class="plain-link" data-auth-action="register">Create customer account</button></div>
+        <p class="login-hint">Demo Admin: <strong>admin@brightloop.com</strong> · <strong>Brightloop123!</strong><br>Staff: <strong>staff@brightloop.com</strong> · <strong>Staff123!</strong><br>Customer: <strong>jordan@example.com</strong> · <strong>Customer123!</strong></p>
       </section>
-      <div class="login-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-card"><span class="art-icon">↗</span><span class="art-label">Monthly recurring revenue</span><strong>$24,680</strong><span class="art-growth">↑ 18.6% this month</span></div><div class="art-sparkle">✳</div><div class="art-dot"></div></div>
+      <div class="login-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-card"><span class="art-icon">↗</span><span class="art-label">Subscription management</span><strong>Brightloop</strong><span class="art-growth">Everything recurring, in sync</span></div><div class="art-sparkle">✳</div><div class="art-dot"></div></div>
     </main>
 
     <div id="appShell" class="app-shell" hidden>
@@ -41,6 +42,11 @@
           <button class="nav-link" data-view="subscriptions"><span class="nav-icon"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.4 7A6.8 6.8 0 0 0 4.1 5.2L2.8 7.5M3.6 13a6.8 6.8 0 0 0 12.3 1.8l1.3-2.3"></path><path d="M2.7 3.5v4h4m10.6 9v-4h-4"></path></svg></span>Subscriptions</button>
           <button class="nav-link" data-view="invoices"><span class="nav-icon"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4.2 2.5h8l3.6 3.7v11.3H4.2V2.5Z"></path><path d="M12 2.8v4h3.5M7 10h6m-6 3h6"></path></svg></span>Invoices<span id="overdueNavCount" class="nav-count" hidden></span></button>
           <button class="nav-link" data-view="payments"><span class="nav-icon"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2.5"></rect><path d="M2.5 8h15M6 12.3h3"></path></svg></span>Payments</button>
+          <button class="nav-link admin-only" data-view="discounts"><span class="nav-icon"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 9.5 9.5 3H17v7.5L10.5 17 3 9.5Z"></path><circle cx="13.4" cy="6.8" r="1"></circle><path d="m7 13 6-6"></path></svg></span>Discounts</button>
+          <button class="nav-link admin-only" data-view="staff"><span class="nav-icon"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7" cy="6.2" r="2.6"></circle><path d="M2.5 16c.2-2.8 1.7-4.2 4.5-4.2s4.3 1.4 4.5 4.2M14 6v6m-3-3h6"></path></svg></span>Team access</button>
+          <button class="nav-link customer-only" data-view="portal-dashboard" hidden><span class="nav-icon">⌂</span>My account</button>
+          <button class="nav-link customer-only" data-view="portal-subscriptions" hidden><span class="nav-icon">⟳</span>My subscriptions</button>
+          <button class="nav-link customer-only" data-view="portal-invoices" hidden><span class="nav-icon">▤</span>My invoices</button>
         </nav>
         <div class="sidebar-bottom">
           <div class="help-card"><div class="help-spark">✳</div><strong>Need a hand?</strong><span>Your billing workspace is ready to go.</span><a href="mailto:support@brightloop.com">Contact support <span>↗</span></a></div>
@@ -56,7 +62,7 @@
             <input id="globalSearch" type="search" placeholder="Search this page…" autocomplete="off">
             <kbd>Ctrl K</kbd>
           </label>
-          <div class="topbar-right"><span id="todayLabel" class="today-label"></span><span class="topbar-divider"></span><span class="top-avatar">B</span></div>
+          <div class="topbar-right"><button id="notificationButton" class="top-notifications" aria-label="View billing alerts" title="Overdue invoices">♧<span id="notificationDot" hidden></span></button><span id="todayLabel" class="today-label"></span><span class="topbar-divider"></span><span class="top-avatar">B</span></div>
         </header>
         <main id="viewRoot" class="content" tabindex="-1"></main>
       </div>

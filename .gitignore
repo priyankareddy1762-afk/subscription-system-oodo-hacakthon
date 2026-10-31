@@ -1,5 +1,13 @@
 node_modules/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 brightloop.sqlite
 brightloop.sqlite-shm
 brightloop.sqlite-wal
 .env
+.env.*
+!.env.example
+npm-debug.log*
+*.log
+.DS_Store
