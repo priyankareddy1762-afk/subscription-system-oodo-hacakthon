@@ -1,0 +1,5 @@
+node_modules/
+brightloop.sqlite
+brightloop.sqlite-shm
+brightloop.sqlite-wal
+.env
